@@ -1,20 +1,21 @@
 name: Android APK Release
 
 # Builds the Android app and publishes the APK as a GitHub Release on every
-# push to main. Each push creates/updates a release tagged with the short SHA.
+# push to main. Also runnable manually from the Actions tab.
 #
-# Prerequisites (one-time, see android/README.md):
-#   * Commit a Gradle wrapper (`cd android && gradle wrapper`) so ./gradlew exists.
-#   * For a *signed* release APK, add repo secrets KEYSTORE_BASE64,
-#     KEYSTORE_PASSWORD, KEY_ALIAS, KEY_PASSWORD and wire the signingConfig in
-#     app/build.gradle.kts. Until then this builds the unsigned debug APK.
+# Why the earlier run failed: the job called ./gradlew, but no Gradle wrapper
+# was committed, so the step errored with "no such file". This workflow instead
+# provisions Gradle via gradle/actions/setup-gradle and generates the wrapper on
+# the runner, so no wrapper needs to live in the repo.
 
 on:
   push:
     branches: [ main ]
+    paths: [ 'android/**', '.github/workflows/android-release.yml' ]
+  workflow_dispatch:
 
 permissions:
-  contents: write   # required to create releases
+  contents: write
 
 concurrency:
   group: android-release-${{ github.ref }}
@@ -37,6 +38,15 @@ jobs:
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Ensure Gradle wrapper exists
+        run: |
+          if [ ! -x ./gradlew ]; then
+            gradle wrapper --gradle-version 8.14.3 --distribution-type bin
+          fi
 
       - name: Build debug APK
         # Switch to :app:assembleRelease once signing secrets are configured.

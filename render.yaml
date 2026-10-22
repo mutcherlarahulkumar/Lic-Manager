@@ -1,0 +1,25 @@
+# Render Blueprint — deploys the Go backend as a web service.
+# Create: Render Dashboard -> New -> Blueprint -> point at this repo.
+#
+# The database is NOT provisioned here (you use your own cloud Postgres). Set
+# DATABASE_URL in the Render service's Environment as a secret, using your
+# provider's connection string (include ?sslmode=require for most providers).
+#
+# The Android app is a client only and is not deployed by Render.
+services:
+  - type: web
+    name: bma-backend
+    runtime: go
+    plan: free
+    rootDir: backend
+    buildCommand: go build -o server ./cmd/server
+    startCommand: ./server
+    healthCheckPath: /healthz
+    autoDeploy: true          # redeploys on push to the default branch (main)
+    envVars:
+      - key: BMA_ENV
+        value: prod
+      - key: DATABASE_URL
+        sync: false           # set this as a secret in the Render dashboard
+      - key: BLISS_API_BASE_URL
+        sync: false           # optional: your existing bmaservices.in base, if proxying

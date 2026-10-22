@@ -1,0 +1,66 @@
+name: Database
+
+# Two ways to run:
+#  1. AUTOMATIC — on every push to main that changes db/migrations/**, the
+#     schema is synced (migrate) against the DATABASE_URL secret.
+#  2. MANUAL — Actions tab -> "Database" -> Run workflow, pick an action:
+#       migrate | clear | reset
+#     "clear" and "reset" are DESTRUCTIVE and require typing the repo name in
+#     the confirm box.
+#
+# Required repo secret: DATABASE_URL  (your cloud Postgres connection string).
+#   Settings -> Secrets and variables -> Actions -> New repository secret.
+
+on:
+  push:
+    branches: [ main ]
+    paths: [ 'db/migrations/**' ]
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'migrate | clear | reset'
+        type: choice
+        options: [ migrate, clear, reset ]
+        default: migrate
+      confirm:
+        description: 'For clear/reset: type the repository name to confirm'
+        type: string
+        default: ''
+
+concurrency:
+  group: db-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install psql client
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq postgresql-client
+
+      - name: Make scripts executable
+        run: chmod +x db/scripts/*.sh
+
+      - name: Migrate (push, or manual migrate)
+        if: github.event_name == 'push' || github.event.inputs.action == 'migrate'
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: db/scripts/migrate.sh
+
+      - name: Clear (manual, destructive)
+        if: github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'clear'
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          CONFIRM: ${{ github.event.inputs.confirm == github.event.repository.name && 'yes' || 'no' }}
+        run: db/scripts/clear.sh
+
+      - name: Reset (manual, destructive)
+        if: github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'reset'
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          CONFIRM: ${{ github.event.inputs.confirm == github.event.repository.name && 'yes' || 'no' }}
+        run: db/scripts/reset.sh

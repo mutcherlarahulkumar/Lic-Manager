@@ -19,8 +19,12 @@ Legend: `[x]` done in scaffold · `[ ]` to do · 🔒 = needs your LIC authoriza
       (loading/error/empty), reusable content (StatusChip, StatTile, DetailRow).
       Dashboard + Policies reflow 1→2→3/4 columns by width.
 - [x] LIC-portal boundary defined + stubbed (`backend/internal/licportal`)
-- [x] Recovered `bmaservices.in` endpoint surface → `docs/API_SURFACE.md`
-- [x] APK release CI on push to main (`.github/workflows/android-release.yml`)
+- [x] Recovered `bmaservices.in` endpoint surface + client architecture → `docs/API_SURFACE.md`
+- [x] APK release CI on push to main (`.github/workflows/android-release.yml`) — fixed wrapper issue
+- [x] DB ops scripts + workflow: migrate/clear/reset (`db/scripts/`, `.github/workflows/db-sync.yml`)
+- [x] Render deploy blueprint for the Go backend (`render.yaml`); backend honors `$PORT`
+- [x] Setup/ops guide (`docs/SETUP.md`) and takeover plan (`docs/APPROACH.md`)
+- [x] Toolchain versions pinned to current stable (AGP 8.7.3, Kotlin 2.1.0, Gradle 8.14.3, Go 1.23)
 - [ ] Add Postgres store: `store.NewPostgres(dsn)` implementing `store.Store`
       (pgx or sqlc). Replace `store.NewDummyStore()` in `main.go`.
 - [ ] Seed migration `0002_seed_bonus_rates.sql` from `bmaextra.s3db:BonusRate`

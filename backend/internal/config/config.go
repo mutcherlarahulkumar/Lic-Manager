@@ -16,10 +16,16 @@ type Config struct {
 }
 
 // Load reads configuration from the environment, applying sensible dev defaults.
+// Hosting platforms (Render, Fly, Cloud Run, …) inject PORT; we honor it so the
+// same binary runs locally and in the cloud with no changes.
 func Load() Config {
+	addr := env("BMA_ADDR", ":8080")
+	if p := os.Getenv("PORT"); p != "" {
+		addr = ":" + p
+	}
 	return Config{
 		Env:             env("BMA_ENV", "dev"),
-		Addr:            env("BMA_ADDR", ":8080"),
+		Addr:            addr,
 		DatabaseURL:     env("DATABASE_URL", ""),
 		BlissAPIBaseURL: env("BLISS_API_BASE_URL", ""),
 	}
