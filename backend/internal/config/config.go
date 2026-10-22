@@ -16,11 +16,15 @@ type Config struct {
 }
 
 // Load reads configuration from the environment, applying sensible dev defaults.
-// Hosting platforms (Render, Fly, Cloud Run, …) inject PORT; we honor it so the
-// same binary runs locally and in the cloud with no changes.
+// Hosting platforms inject the listen port differently, so we honor all the
+// common ones. Precedence: Zoho Catalyst AppSail (X_ZOHO_CATALYST_LISTEN_PORT),
+// then the generic PORT (Render/Fly/Cloud Run/…), then BMA_ADDR.
 func Load() Config {
 	addr := env("BMA_ADDR", ":8080")
 	if p := os.Getenv("PORT"); p != "" {
+		addr = ":" + p
+	}
+	if p := os.Getenv("X_ZOHO_CATALYST_LISTEN_PORT"); p != "" {
 		addr = ":" + p
 	}
 	return Config{
