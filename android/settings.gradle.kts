@@ -11,5 +11,5 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "BMA"
+rootProject.name = "Lifely"
 include(":app")

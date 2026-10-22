@@ -22,13 +22,13 @@ android {
 
     buildTypes {
         debug {
-            // Points the app at the local Go backend during development.
-            buildConfigField("String", "API_BASE_URL", "\"http://10.0.2.2:8080/\"")
+            // Points at the deployed backend so any build works out of the box.
+            // For local dev against a laptop server, use "http://10.0.2.2:8080/".
+            buildConfigField("String", "API_BASE_URL", "\"https://lic-manager.onrender.com/\"")
         }
         release {
             isMinifyEnabled = true
-            // TODO: set your production backend URL.
-            buildConfigField("String", "API_BASE_URL", "\"https://api.example.in/\"")
+            buildConfigField("String", "API_BASE_URL", "\"https://lic-manager.onrender.com/\"")
         }
     }
 

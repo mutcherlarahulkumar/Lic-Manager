@@ -58,7 +58,7 @@ private fun Hero() {
         modifier = Modifier.fillMaxWidth(),
     ) {
         Column(Modifier.padding(D.xl), verticalArrangement = Arrangement.spacedBy(D.xs)) {
-            Text("Welcome back", style = MaterialTheme.typography.labelLarge)
+            Text("Lifely", style = MaterialTheme.typography.labelLarge)
             Text("Your agency at a glance", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
             Text(
                 "Dues, leads and commission — all in one place.",

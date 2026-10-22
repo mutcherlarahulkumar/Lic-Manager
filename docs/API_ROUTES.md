@@ -73,16 +73,42 @@ response JSON are noted where confirmed, else flagged for extraction (§4).
 | POST | `/addstatus.php` | — | push status record |
 | POST | `/manage/crashlog.php` | — | crash reporting |
 | POST | `/manage/update_db.php` | `db=` | server-side DB update |
+| GET  | `/?agcode=…`, `/admin?agcode=…` | `agcode=` | agency dashboards (web pages) |
+| GET  | `/agdata/`, `/uploads/` | — | static agency assets / uploaded files |
 
-### `push.bmaservices.in` — `bma.BlissPushClient`
+### `push.bmaservices.in` — `bma.BlissPushClient` (fully recovered)
 | Verb | Path | Purpose |
 |------|------|---------|
-| POST | `/api/` | push register/send (map to FCM in rebuild) |
+| POST | `/api/` | device register / topic subscribe / push send |
 
-### `/dompdf`
+Recovered details:
+- **Auth:** HMAC-signed requests. The client holds an API key prefixed `bpk_`
+  (placeholder `PASTE…` when unconfigured) and signs with HMAC-SHA256
+  (`HmacHex`/`Sha256`).
+- **Device register payload (`DevicePayload`):** `user_id`, `device_id`,
+  `fcm_token`, `app_version`, `os_version`, `device_model`.
+- **Topic subscribe** reads `data.device.topics` / `data.topics`; topic names are
+  built from product/segment codes (`BMAP`, `AGCO`, `connect`, `COMB`/`combo`)
+  with `_full` / `_demo` suffixes (e.g. `all_full`, `all_demo`, `bma_test`).
+- **Response envelope:** `{ success, error: { code, message } }` — success
+  checked via `success`, errors read from `error.code` / `error.message`.
+- **Notification channel:** Android channel id `bmapro_broadcast`
+  ("BMA Pro Notifications"); token cached under pref key `fcm_token`.
+- **Rebuild mapping:** this is a clean, self-contained push service — reproduce
+  it directly (device register + topic subscribe + HMAC auth) or swap to
+  Firebase Admin on the Go side.
+
+### `/dompdf` and asset paths
 | Verb | Path | Purpose |
 |------|------|---------|
 | GET | `/dompdf/post.php?page=portrait` | server-side PDF generation |
+| GET | `/imvideo`, `/posters/bliss.png` | marketing image/video + poster assets |
+
+### `www.bmaservices.in` variants
+Some `/ptdata` calls also appear under `www.bmaservices.in` (same endpoints as
+the apex host): `/ptdata/getm.php?l=`, `/ptdata/getmnew.php?key=`,
+`/ptdata/insuremax.php?m=`. Treat `www.` and the apex as the same backend;
+normalise to one host in the rebuild.
 
 **Known bugs to fix in the rebuild:** one call used host `bmaservices.in.in`
 (double `.in`); one used plain `http://`. Use a single HTTPS host.
@@ -118,6 +144,24 @@ interface (dummy data today). See `docs/APPROACH.md` §3.
 > is the one thing this project leaves to you and your LIC agreement.
 
 ---
+
+## 3b. Full host inventory (so nothing is missed)
+
+Every network host referenced in the app, bucketed:
+
+- **Your backend (Group A, documented above):** `bmaservices.in`,
+  `www.bmaservices.in`, `finserve.bmaservices.in`, `push.bmaservices.in`.
+- **Other Bliss / partner properties (classify these yourself):** `mybliss.in`,
+  `www.blissmis.com`, `blissinfosoft.com` / `blissinfosoft.in`, `margahead.in`,
+  `perfectpolicy.org`, `policyapps.in`. These are referenced by the app but their
+  endpoints weren't catalogued here — tell me which are yours and I'll document
+  them the same way as Group A.
+- **LIC systems (Group B — boundary only):** `*.licindia.in`
+  (`ebiz`, `merchant`, `mbiz`, `nav-ananda`, `enach`, `linkpan`),
+  `customer.onlinelic.in`, `lic.corover.ai`. Not detailed (see §3).
+- **Third-party / external (links & SDKs, not app APIs):** `youtube.com`/
+  `youtu.be`, `google.com`/`maps.googleapis.com`/`play.google.com`/
+  `myaccount.google.com`, `chatgpt.com`.
 
 ## 4. What's confirmed vs. still to extract
 
