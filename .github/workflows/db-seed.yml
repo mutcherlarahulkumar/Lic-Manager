@@ -44,6 +44,16 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
+      - name: Verify DATABASE_URL secret is set
+        # Fails fast with a clear message BEFORE downloading the seed asset, so a
+        # missing secret never consumes your uploaded release.
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "::error::DATABASE_URL secret is not set. Add it under"
+            echo "::error::Settings -> Secrets and variables -> Actions -> New repository secret."
+            exit 1
+          fi
+
       - name: Install psql client
         run: |
           sudo apt-get update -qq
