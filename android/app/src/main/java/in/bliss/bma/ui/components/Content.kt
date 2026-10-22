@@ -35,7 +35,7 @@ fun StatusChip(status: String?) {
 /** Compact KPI tile for dashboards. */
 @Composable
 fun StatTile(label: String, value: String, modifier: Modifier = Modifier) {
-    ElevatedCard(modifier, shape = RoundedCornerShape(D.radius)) {
+    OutlinedCard(modifier, shape = RoundedCornerShape(D.radius)) {
         Column(Modifier.padding(D.lg)) {
             Text(value, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
             Spacer(Modifier.height(D.xs))

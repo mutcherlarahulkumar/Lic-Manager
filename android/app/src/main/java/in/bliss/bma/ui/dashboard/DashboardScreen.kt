@@ -80,7 +80,7 @@ private fun KpiRow() {
 
 @Composable
 private fun ActionCard(a: Action, onOpen: (String) -> Unit) {
-    ElevatedCard(shape = MaterialTheme.shapes.medium, modifier = Modifier.clickable { onOpen(a.route) }) {
+    OutlinedCard(shape = MaterialTheme.shapes.medium, modifier = Modifier.clickable { onOpen(a.route) }) {
         Column(
             Modifier.fillMaxWidth().heightIn(min = 100.dp).padding(D.lg),
             verticalArrangement = Arrangement.spacedBy(D.sm),

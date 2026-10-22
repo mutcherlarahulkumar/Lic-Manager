@@ -35,7 +35,7 @@ fun MoreScreen(onOpen: (String) -> Unit) {
                 contentPadding = PaddingValues(vertical = D.md),
             ) {
                 items(entries, key = { it.route }) { e ->
-                    ElevatedCard(shape = MaterialTheme.shapes.medium, modifier = Modifier.fillMaxWidth()) {
+                    OutlinedCard(shape = MaterialTheme.shapes.medium, modifier = Modifier.fillMaxWidth()) {
                         ListItem(
                             leadingContent = { Icon(e.icon, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
                             headlineContent = { Text(e.label) },

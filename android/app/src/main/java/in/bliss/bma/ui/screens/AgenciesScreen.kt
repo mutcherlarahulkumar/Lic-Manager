@@ -38,7 +38,7 @@ fun AgenciesScreen(vm: AgenciesViewModel = viewModel()) {
 
 @Composable
 private fun AgencyCard(a: Agency) {
-    ElevatedCard(shape = MaterialTheme.shapes.medium) {
+    OutlinedCard(shape = MaterialTheme.shapes.medium) {
         Column(Modifier.fillMaxWidth().padding(D.lg), verticalArrangement = Arrangement.spacedBy(D.xs)) {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 Text(a.name, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)

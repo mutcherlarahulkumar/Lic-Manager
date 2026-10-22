@@ -38,7 +38,7 @@ fun LeadsScreen(vm: LeadsViewModel = viewModel()) {
 
 @Composable
 private fun LeadCard(p: Prospect) {
-    ElevatedCard(shape = MaterialTheme.shapes.medium) {
+    OutlinedCard(shape = MaterialTheme.shapes.medium) {
         Column(Modifier.fillMaxWidth().padding(D.lg), verticalArrangement = Arrangement.spacedBy(D.xs)) {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 Text(p.fullName, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)

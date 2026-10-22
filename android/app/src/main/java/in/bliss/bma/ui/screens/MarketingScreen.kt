@@ -37,7 +37,7 @@ fun MarketingScreen() {
                 contentPadding = PaddingValues(vertical = D.md),
             ) {
                 items(templates, key = { it.title }) { t ->
-                    ElevatedCard(shape = MaterialTheme.shapes.medium, modifier = Modifier.fillMaxWidth()) {
+                    OutlinedCard(shape = MaterialTheme.shapes.medium, modifier = Modifier.fillMaxWidth()) {
                         Column(Modifier.padding(D.lg), verticalArrangement = Arrangement.spacedBy(D.xs)) {
                             Text(t.title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
                             Text(t.desc, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)

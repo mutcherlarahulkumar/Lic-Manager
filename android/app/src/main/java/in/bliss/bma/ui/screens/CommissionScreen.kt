@@ -45,7 +45,7 @@ private fun CommissionBody(c: CommissionSummary) {
         verticalArrangement = Arrangement.spacedBy(D.md),
     ) {
         val period = "${MONTHS.getOrElse(c.month) { c.month.toString() }} ${c.year}"
-        ElevatedCard(shape = MaterialTheme.shapes.large, modifier = Modifier.fillMaxWidth()) {
+        OutlinedCard(shape = MaterialTheme.shapes.large, modifier = Modifier.fillMaxWidth()) {
             Column(Modifier.padding(D.lg)) {
                 Text(period, style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 Spacer(Modifier.height(D.xs))
@@ -75,7 +75,7 @@ private fun CommissionBody(c: CommissionSummary) {
 
 @Composable
 private fun LineTable(header: Triple<String, String, String>, rows: List<Pair<Triple<String, Double, Double>, Boolean>>) {
-    ElevatedCard(shape = MaterialTheme.shapes.medium, modifier = Modifier.fillMaxWidth()) {
+    OutlinedCard(shape = MaterialTheme.shapes.medium, modifier = Modifier.fillMaxWidth()) {
         Column(Modifier.padding(D.md)) {
             Row(Modifier.fillMaxWidth().padding(vertical = D.xs)) {
                 Text(header.first, Modifier.weight(2f), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)

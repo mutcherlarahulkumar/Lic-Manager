@@ -35,7 +35,7 @@ fun ToolsScreen() {
                 contentPadding = PaddingValues(vertical = D.md),
             ) {
                 items(items, key = { it.title }) { s ->
-                    ElevatedCard(shape = MaterialTheme.shapes.medium, modifier = Modifier.fillMaxWidth()) {
+                    OutlinedCard(shape = MaterialTheme.shapes.medium, modifier = Modifier.fillMaxWidth()) {
                         ListItem(
                             leadingContent = { Icon(s.icon, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
                             headlineContent = { Text(s.title) },
@@ -45,7 +45,7 @@ fun ToolsScreen() {
                     }
                 }
                 item {
-                    ElevatedCard(shape = MaterialTheme.shapes.medium, modifier = Modifier.fillMaxWidth()) {
+                    OutlinedCard(shape = MaterialTheme.shapes.medium, modifier = Modifier.fillMaxWidth()) {
                         ListItem(
                             leadingContent = { Icon(Icons.Filled.Favorite, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
                             headlineContent = { Text("About Lifely") },

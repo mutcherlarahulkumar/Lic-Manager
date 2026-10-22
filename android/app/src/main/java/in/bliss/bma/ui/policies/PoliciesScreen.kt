@@ -47,7 +47,7 @@ fun PoliciesScreen(vm: PoliciesViewModel = viewModel()) {
 
 @Composable
 private fun PolicyCard(p: Policy) {
-    ElevatedCard(shape = RoundedCornerShape(D.radius)) {
+    OutlinedCard(shape = RoundedCornerShape(D.radius)) {
         Column(Modifier.padding(D.lg), verticalArrangement = Arrangement.spacedBy(D.xs)) {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 Text(

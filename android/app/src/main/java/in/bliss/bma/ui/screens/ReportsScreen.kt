@@ -54,7 +54,7 @@ private fun Summary(policies: List<Policy>) {
         }
 
         SectionHeader("By status")
-        ElevatedCard(shape = MaterialTheme.shapes.medium, modifier = Modifier.fillMaxWidth()) {
+        OutlinedCard(shape = MaterialTheme.shapes.medium, modifier = Modifier.fillMaxWidth()) {
             Column(Modifier.padding(D.md)) {
                 if (byStatus.isEmpty()) {
                     Text("No policies to summarise.", style = MaterialTheme.typography.bodyMedium)
