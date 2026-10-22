@@ -72,12 +72,23 @@ the Render URL (`app/build.gradle.kts` → `API_BASE_URL`).
 | `android-release.yml` | push to `main` under `android/**`, or manual | build APK, publish a GitHub Release |
 | `db-sync.yml` | push to `main` under `db/migrations/**`, or manual | migrate / clear / reset the DB |
 
-### Why the first Android run failed (and the fix)
+### Why the Android runs failed (verified from the logs) and the fixes
 
-The initial workflow invoked `./gradlew`, but no Gradle **wrapper** was committed,
-so the step failed with "no such file or directory". Fixed by provisioning
-Gradle on the runner (`gradle/actions/setup-gradle`) and generating the wrapper
-there, so the repo needs no committed wrapper jar.
+1. **Run 1** invoked `./gradlew`, but no Gradle **wrapper** was committed →
+   "no such file or directory".
+2. **Run 2** failed earlier, at the **Set up Android SDK** step:
+   `android-actions/setup-android@v3` tried to install the obsolete `tools` SDK
+   package — `Warning: Failed to find package 'tools'` → `sdkmanager` exit 1.
+   The job never reached Gradle.
+3. A **warning** on every run: `actions/checkout@v4`, `setup-java@v4` and
+   `setup-android@v3` target the deprecated Node 20.
+
+**Fixes applied:** dropped `setup-android` entirely (the `ubuntu-latest` runner
+already has the Android SDK at `$ANDROID_HOME`); accept licenses defensively;
+build with Gradle provisioned by `gradle/actions/setup-gradle@v4` (no committed
+wrapper). First-party actions bumped to Node 24 versions (`checkout@v5`,
+`setup-java@v5`) to clear the deprecation warning. Any residual Node 20 warning
+would come only from third-party actions until they publish Node 24 releases.
 
 > Note: the Android project could not be compiled in the build sandbox used to
 > create it (no Android SDK there). The first CI run is the real compile — if it

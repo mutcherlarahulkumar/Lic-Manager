@@ -3,10 +3,14 @@ name: Android APK Release
 # Builds the Android app and publishes the APK as a GitHub Release on every
 # push to main. Also runnable manually from the Actions tab.
 #
-# Why the earlier run failed: the job called ./gradlew, but no Gradle wrapper
-# was committed, so the step errored with "no such file". This workflow instead
-# provisions Gradle via gradle/actions/setup-gradle and generates the wrapper on
-# the runner, so no wrapper needs to live in the repo.
+# Failure history & fixes:
+#   * 1st failure: called ./gradlew but no wrapper was committed.
+#   * 2nd failure: android-actions/setup-android@v3 tried to install the obsolete
+#     'tools' SDK package ("Failed to find package 'tools'") and exited 1.
+#   Fix: the ubuntu-latest runner already ships the Android SDK (ANDROID_HOME),
+#   so we drop setup-android, accept licenses defensively, and let Gradle
+#   (provisioned by setup-gradle) build. First-party actions pinned to Node24
+#   versions to clear the "Node.js 20 is deprecated" warning.
 
 on:
   push:
@@ -28,29 +32,28 @@ jobs:
       run:
         working-directory: android
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '17'
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
-
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.14.3'
 
-      - name: Ensure Gradle wrapper exists
-        run: |
-          if [ ! -x ./gradlew ]; then
-            gradle wrapper --gradle-version 8.14.3 --distribution-type bin
-          fi
+      - name: Accept Android SDK licenses
+        # SDK is preinstalled on the runner; just make sure licenses are accepted
+        # so AGP can fetch any missing platform/build-tools.
+        run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses >/dev/null 2>&1 || true
 
       - name: Build debug APK
+        # Uses the Gradle provisioned above (no committed wrapper needed).
         # Switch to :app:assembleRelease once signing secrets are configured.
-        run: ./gradlew :app:assembleDebug --no-daemon --stacktrace
+        run: gradle :app:assembleDebug --no-daemon --stacktrace
 
       - name: Stage APK
         run: |
