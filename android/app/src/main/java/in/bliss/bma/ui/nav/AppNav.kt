@@ -64,10 +64,10 @@ fun AppNav() {
 
             // Secondary destinations reached from Home / More.
             composable("commission") { CommissionScreen() }
-            composable("reports") { ComingSoonScreen("Reports") }
-            composable("agencies") { ComingSoonScreen("Agencies") }
-            composable("marketing") { ComingSoonScreen("Marketing") }
-            composable("tools") { ComingSoonScreen("Tools") }
+            composable("reports") { ReportsScreen() }
+            composable("agencies") { AgenciesScreen() }
+            composable("marketing") { MarketingScreen() }
+            composable("tools") { ToolsScreen() }
         }
     }
 }

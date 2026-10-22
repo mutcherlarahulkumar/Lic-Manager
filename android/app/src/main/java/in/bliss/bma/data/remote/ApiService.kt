@@ -1,5 +1,6 @@
 package `in`.bliss.bma.data.remote
 
+import `in`.bliss.bma.data.model.Agency
 import `in`.bliss.bma.data.model.ApiEnvelope
 import `in`.bliss.bma.data.model.Client
 import `in`.bliss.bma.data.model.CommissionSummary
@@ -17,6 +18,10 @@ interface ApiService {
     /** GET /api/v1/policies — the agent's policies. */
     @GET("api/v1/policies")
     suspend fun listPolicies(): ApiEnvelope<List<Policy>>
+
+    /** GET /api/v1/agencies — agencies the agent manages. */
+    @GET("api/v1/agencies")
+    suspend fun listAgencies(): ApiEnvelope<List<Agency>>
 
     /** GET /api/v1/clients — the agent's clients/policyholders. */
     @GET("api/v1/clients")

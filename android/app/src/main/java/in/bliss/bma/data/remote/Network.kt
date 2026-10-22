@@ -7,20 +7,27 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
+import java.util.concurrent.TimeUnit
 
 /**
- * Builds the [ApiService]. Base URL comes from BuildConfig.API_BASE_URL so debug
- * builds talk to the local Go backend (10.0.2.2:8080 from the emulator) and
- * release builds talk to production.
+ * Builds the [ApiService]. Base URL comes from BuildConfig.API_BASE_URL.
  *
- * TODO(auth): add an Authorization interceptor once auth endpoints exist.
+ * Timeouts are generous on purpose: the backend runs on a free tier that sleeps
+ * when idle and can take ~50s to cold-start. Short default timeouts (10s) made
+ * the first request after idle fail — hence the 60s call/read timeouts and
+ * connection-failure retry below.
  */
 object Network {
     val api: ApiService by lazy {
         val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
         val client = OkHttpClient.Builder()
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(60, TimeUnit.SECONDS)
+            .writeTimeout(60, TimeUnit.SECONDS)
+            .callTimeout(90, TimeUnit.SECONDS)
+            .retryOnConnectionFailure(true)
             .addInterceptor(HttpLoggingInterceptor().apply {
-                level = if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY
+                level = if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BASIC
                 else HttpLoggingInterceptor.Level.NONE
             })
             .build()

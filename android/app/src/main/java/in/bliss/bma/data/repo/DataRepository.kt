@@ -10,6 +10,7 @@ import `in`.bliss.bma.data.remote.Network
  * (dummy data today); add a Room cache here later without changing callers.
  */
 class DataRepository {
+    suspend fun agencies(): List<`in`.bliss.bma.data.model.Agency> = Network.api.listAgencies().unwrap().orEmpty()
     suspend fun clients(): List<Client> = Network.api.listClients().unwrap().orEmpty()
     suspend fun prospects(): List<Prospect> = Network.api.listProspects().unwrap().orEmpty()
     suspend fun commission(month: Int? = null, year: Int? = null): CommissionSummary {

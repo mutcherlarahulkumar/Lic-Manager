@@ -1,11 +1,12 @@
 package `in`.bliss.bma.data.model
 
-/** Mirrors the backend response envelope: { ok, data, error, meta }. */
+/** Mirrors the backend response envelope: { ok, data, error }. The backend also
+ *  sends `meta`, but the app doesn't use it; Moshi ignores unknown keys, and
+ *  leaving it out avoids any `Any?` deserialization edge cases. */
 data class ApiEnvelope<T>(
     val ok: Boolean,
     val data: T? = null,
     val error: String? = null,
-    val meta: Map<String, Any?>? = null,
 )
 
 /** A LIC policy (mirrors backend domain.Policy). */
@@ -19,6 +20,17 @@ data class Policy(
     val status: String? = null,
     val nextDueDate: String? = null,
     val source: String = "manual",
+)
+
+/** An agency the agent manages (mirrors backend domain.Agency). */
+data class Agency(
+    val id: String,
+    val agencyCode: String,
+    val name: String,
+    val branchCode: String? = null,
+    val status: String? = null,
+    val clubTier: String? = null,
+    val ranking: Int = 0,
 )
 
 /** A client / policyholder (mirrors backend domain.Client). */
