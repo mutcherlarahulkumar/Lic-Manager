@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--
+      Deliberately minimal permissions for the clean rebuild. The original app
+      requested many sensitive permissions (SMS read, contacts, overlay, etc.)
+      to support device-side automation. The rebuild keeps only INTERNET by
+      default; add a permission back ONLY when a screen genuinely needs it, and
+      request it at runtime with a clear rationale.
+    -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:allowBackup="false"
+        android:label="BMA"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.BMA"
+        android:usesCleartextTraffic="true">
+        <!-- usesCleartextTraffic is for local dev against the Go backend only;
+             remove it for release (production must be HTTPS). -->
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>

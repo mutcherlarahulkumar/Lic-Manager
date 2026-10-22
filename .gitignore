@@ -1,0 +1,17 @@
+# Go
+/backend/bin/
+*.test
+*.out
+
+# Android / Gradle
+/android/.gradle/
+/android/build/
+/android/app/build/
+/android/local.properties
+/android/.idea/
+*.apk
+*.keystore
+
+# OS / editor
+.DS_Store
+*.swp
