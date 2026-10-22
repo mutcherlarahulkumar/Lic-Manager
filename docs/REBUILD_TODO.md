@@ -13,7 +13,14 @@ Legend: `[x]` done in scaffold · `[ ]` to do · 🔒 = needs your LIC authoriza
 - [x] Postgres schema for the recovered data model (`db/migrations/0001_init.sql`)
 - [x] Go backend skeleton: config, router, response envelope, dummy store
 - [x] Kotlin app skeleton: theme, nav, reference feature (Policies)
+- [x] Responsive Compose design system: spacing scale (`ui/theme/Dimens.kt`),
+      adaptive layout helpers (`ui/components/Layout.kt` — width classes,
+      adaptive columns, max-width container), shared state views
+      (loading/error/empty), reusable content (StatusChip, StatTile, DetailRow).
+      Dashboard + Policies reflow 1→2→3/4 columns by width.
 - [x] LIC-portal boundary defined + stubbed (`backend/internal/licportal`)
+- [x] Recovered `bmaservices.in` endpoint surface → `docs/API_SURFACE.md`
+- [x] APK release CI on push to main (`.github/workflows/android-release.yml`)
 - [ ] Add Postgres store: `store.NewPostgres(dsn)` implementing `store.Store`
       (pgx or sqlc). Replace `store.NewDummyStore()` in `main.go`.
 - [ ] Seed migration `0002_seed_bonus_rates.sql` from `bmaextra.s3db:BonusRate`
