@@ -1,0 +1,73 @@
+name: Database Seed
+
+# Resets (optional) and loads a data seed into $DATABASE_URL.
+#
+# ⚠️ The seed contains live credentials/PII, so it is NOT stored in the repo.
+# This workflow pulls it from a DRAFT release you upload yourself, then DELETES
+# that release at the end so the sensitive asset does not linger. Rotate the
+# credentials in the seed afterwards.
+#
+# One-time, before running:
+#   1. Create a DRAFT release tagged `seed-data` (Releases -> Draft a new
+#      release -> tag `seed-data`), attach your seed file named exactly
+#      `balam_seed.sql`, and Save draft (do NOT publish).
+#   2. Ensure the repo secret DATABASE_URL is set (Settings -> Secrets).
+#   3. Actions -> "Database Seed" -> Run workflow. To also wipe first, set
+#      reset = yes and type the repository name in confirm.
+
+on:
+  workflow_dispatch:
+    inputs:
+      reset:
+        description: 'Wipe the schema before seeding? (yes/no)'
+        type: choice
+        options: [ 'no', 'yes' ]
+        default: 'no'
+      confirm:
+        description: 'For reset=yes: type the repository name to confirm'
+        type: string
+        default: ''
+
+permissions:
+  contents: write
+
+concurrency:
+  group: db-seed-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  seed:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Install psql client
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq postgresql-client
+
+      - name: Download seed from the draft release
+        run: |
+          gh release download seed-data --repo "$GITHUB_REPOSITORY" \
+            --pattern 'balam_seed.sql' --output seed.sql --clobber
+
+      - name: Reset schema (optional, gated)
+        if: ${{ github.event.inputs.reset == 'yes' && github.event.inputs.confirm == github.event.repository.name }}
+        run: |
+          echo "Wiping public schema..."
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -q \
+            -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
+
+      - name: Load seed (legacy schema + data)
+        run: |
+          chmod +x db/scripts/*.sh
+          db/scripts/seed.sh seed.sql
+
+      - name: Delete the transient seed release (always)
+        if: always()
+        run: |
+          gh release delete seed-data --repo "$GITHUB_REPOSITORY" --cleanup-tag --yes || true
+          rm -f seed.sql
